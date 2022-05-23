@@ -17,6 +17,7 @@ package org.apache.calcite.jdbc;
 import org.apache.calcite.adapter.java.JavaTypeFactory;
 import org.apache.calcite.avatica.AvaticaFactory;
 
+import java.sql.SQLException;
 import java.util.Properties;
 
 public class KuduCalciteConnectionImpl extends CalciteConnectionImpl {
@@ -30,4 +31,13 @@ public class KuduCalciteConnectionImpl extends CalciteConnectionImpl {
     return (KuduMetaImpl) meta();
   }
 
+  @Override
+  public boolean getAutoCommit() {
+    return false;
+  }
+
+  @Override
+  public void setAutoCommit(boolean autoCommit) throws SQLException {
+    super.setAutoCommit(false);
+  }
 }
