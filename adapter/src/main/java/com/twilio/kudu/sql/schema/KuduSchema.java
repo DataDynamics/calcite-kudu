@@ -46,11 +46,12 @@ public final class KuduSchema extends AbstractSchema {
   private Optional<Map<String, Table>> cachedTableMap = Optional.empty();
 
   // properties
-  public static String KUDU_CONNECTION_STRING = "connect";
-  public static String ENABLE_INSERTS_FLAG = "enableInserts";
-  public static String DISABLE_CUBE_AGGREGATIONS = "disableCubeAggregation";
-  public static String CREATE_DUMMY_PARTITION_FLAG = "createDummyPartition";
-  public static String READ_SNAPSHOT_TIME_DIFFERENCE = "readSnapshotTimeDifference";
+  public static final String KUDU_CONNECTION_STRING = "connect";
+  public static final String ENABLE_INSERTS_FLAG = "enableInserts";
+  public static final String DISABLE_CUBE_AGGREGATIONS = "disableCubeAggregation";
+  public static final String CREATE_DUMMY_PARTITION_FLAG = "createDummyPartition";
+  public static final String READ_SNAPSHOT_TIME_DIFFERENCE = "readSnapshotTimeDifference";
+  public static final String WORKER_COUNT = "workerCount";
 
   public final boolean enableInserts;
   public final boolean disableCubeAggregation;
@@ -59,18 +60,17 @@ public final class KuduSchema extends AbstractSchema {
 
   public KuduSchema(final String connectString, final Map<String, KuduTableMetadata> kuduTableMetadataMap,
       final Map<String, Object> propertyMap) {
-    this.client = new AsyncKuduClient.AsyncKuduClientBuilder(connectString).build();
+    int workerCount = Integer.parseInt((String) propertyMap.getOrDefault(WORKER_COUNT, String.valueOf(2 * Runtime.getRuntime().availableProcessors())));
+    this.client = new AsyncKuduClient.AsyncKuduClientBuilder(connectString).workerCount(workerCount).build();
     this.kuduTableMetadataMap = kuduTableMetadataMap;
     // We disable inserts by default as this feature has not been thoroughly tested
-    this.enableInserts = Boolean.valueOf((String) propertyMap.getOrDefault(ENABLE_INSERTS_FLAG, "false"));
+    this.enableInserts = Boolean.parseBoolean((String) propertyMap.getOrDefault(ENABLE_INSERTS_FLAG, "false"));
     // If set to true CubeMutationState does not compute aggregations in order to
     // speed up the
     // DataLoader (useful only for performance testing)
-    this.disableCubeAggregation = Boolean
-        .valueOf((String) propertyMap.getOrDefault(DISABLE_CUBE_AGGREGATIONS, "false"));
-    this.createDummyPartition = Boolean.valueOf((String) propertyMap.getOrDefault(CREATE_DUMMY_PARTITION_FLAG, "true"));
-    this.readSnapshotTimeDifference = Long
-        .valueOf((String) propertyMap.getOrDefault(READ_SNAPSHOT_TIME_DIFFERENCE, "0"));
+    this.disableCubeAggregation = Boolean.parseBoolean((String) propertyMap.getOrDefault(DISABLE_CUBE_AGGREGATIONS, "false"));
+    this.createDummyPartition = Boolean.parseBoolean((String) propertyMap.getOrDefault(CREATE_DUMMY_PARTITION_FLAG, "true"));
+    this.readSnapshotTimeDifference = Long.parseLong((String) propertyMap.getOrDefault(READ_SNAPSHOT_TIME_DIFFERENCE, "0"));
   }
 
   public void clearCachedTableMap() {
