@@ -56,4 +56,8 @@ public class KuduMetaImpl extends CalciteMetaImpl {
     }
   }
 
+  @Override
+  public void rollback(ConnectionHandle ch) {
+    // org.apache.nifi.processors.standard.ExecuteSQLRecord: ExecuteSQLRecord[id=f33e42f7-e08b-1b9e-ffff-ffff876e48db] Failed to process session due to java.lang.UnsupportedOperationException; Processor Administratively Yielded for 1 sec: java.lang.UnsupportedOperationException
+  }
 }
