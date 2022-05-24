@@ -117,6 +117,13 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>jdk11</id>
+            <properties>
+                <java.version>11</java.version>
+                <jdk.version>11</jdk.version>
+            </properties>
+        </profile>
     </profiles>
     <dependencyManagement>
         <dependencies>
